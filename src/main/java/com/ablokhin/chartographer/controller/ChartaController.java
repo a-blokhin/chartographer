@@ -1,7 +1,7 @@
 package com.ablokhin.chartographer.controller;
 
 import com.ablokhin.chartographer.exception.ChartaNotFoundException;
-import com.ablokhin.chartographer.exception.SizePositionException;
+import com.ablokhin.chartographer.exception.IntersectionException;
 import com.ablokhin.chartographer.service.ChartaServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,10 @@ public class ChartaController {
         try {
             Long id = chartaServiceImpl.createCharta(width, height);
             return ResponseEntity.status(HttpStatus.CREATED).body(id);
-        } catch (SizePositionException e) {
+        } catch (IntersectionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (ChartaNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e){
-            return ResponseEntity.ok().body(e.getStackTrace());
         }
     }
 
@@ -37,11 +35,9 @@ public class ChartaController {
                                       @RequestParam Integer x, @RequestParam Integer y,
                                       @RequestParam Integer width, @RequestParam Integer height) {
         try {
-            chartaServiceImpl.createFragment(id, postedFragment, x, y, width, height);
+            chartaServiceImpl.addFragment(id, postedFragment, x, y, width, height);
             return ResponseEntity.ok("");
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (SizePositionException e) {
+        } catch (IOException | IntersectionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (ChartaNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -54,7 +50,7 @@ public class ChartaController {
                                          @RequestParam Integer width, @RequestParam Integer height) {
         try {
             return ResponseEntity.ok().body(chartaServiceImpl.getFragment(id, x, y, width, height));
-        } catch (SizePositionException e) {
+        } catch (IntersectionException e) {
             return ResponseEntity.badRequest().build();
         } catch (ChartaNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -8,6 +8,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.awt.image.BufferedImage;
+
 
 @Configuration
 public class CacheConfiguration {
@@ -24,8 +26,8 @@ public class CacheConfiguration {
                         name,
                         CacheBuilder.newBuilder()
                                 .weigher((key, value) -> {
-                                    if (value instanceof byte[]) {
-                                        return ((byte[]) value).length;
+                                    if (value instanceof BufferedImage) {
+                                        return ((BufferedImage) value).getWidth() * ((BufferedImage) value).getHeight() * 3;
                                     }
                                     throw new IllegalStateException("Using array size is only supported for byte arrays"); //$NON-NLS-1$
                                 })

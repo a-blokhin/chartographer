@@ -1,64 +1,102 @@
 package com.ablokhin.chartographer.service;
 
-import com.ablokhin.chartographer.ChartographerApplication;
 import com.ablokhin.chartographer.exception.ChartaNotFoundException;
-import com.ablokhin.chartographer.exception.SizePositionException;
+import com.ablokhin.chartographer.exception.IntersectionException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Slf4j
 @SpringBootTest
 public class ChartaServiceImplTest {
 
-    @Autowired
-    private ChartaServiceImpl chartaServiceImpl;
+    private final ChartaService chartaServiceImpl = new ChartaServiceImpl(new DaoForServiceTest());
+
+    private static byte[] bytes;
+    private static final Long id = 1L;
 
     @BeforeAll
     public static void setup() throws IOException {
-        String fileName = "static";
-        Path path = Paths.get("static");
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
-        }
-        ChartographerApplication.STORAGE_PATH = fileName;
+        BufferedImage fragment = new BufferedImage(101, 101, BufferedImage.TYPE_3BYTE_BGR);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(fragment, "BMP", baos);
+        bytes = baos.toByteArray();
     }
 
     @Test
-    public void createChartaTest() throws ChartaNotFoundException, SizePositionException {
-        Long expected = 1L;
-        Long first = chartaServiceImpl.createCharta(1, 1);
-        Long second = chartaServiceImpl.createCharta(6000, 6000);
-        Long third = chartaServiceImpl.createCharta(1, 6000);
-        assertEquals(1L, first);
-        assertEquals(2L, second);
-        assertEquals(3L, third);
-        chartaServiceImpl.deleteCharta(1L);
-        chartaServiceImpl.deleteCharta(2L);
-        chartaServiceImpl.deleteCharta(3L);
+    public void createChartaTest() throws ChartaNotFoundException, IntersectionException {
+        List<Integer> sizes = Arrays.asList(
+                1, 1,
+                6000, 6000,
+                1, 6000);
+        for (int i = 0; i < (sizes.size() / 2); i++) {
+            assertEquals(i+1, chartaServiceImpl.createCharta(sizes.get(2 * i), sizes.get(2 * i + 1)));
+        }
     }
 
     @Test
     public void createWrongChartaTest() {
-        assertThrows(SizePositionException.class, () -> {
-            chartaServiceImpl.createCharta(0, 100);
-        });
-        assertThrows(SizePositionException.class, () -> {
-            chartaServiceImpl.createCharta(-10, 10);
-        });
-        assertThrows(SizePositionException.class, () -> {
-            chartaServiceImpl.createCharta(10, 0);
-        });
-        assertThrows(SizePositionException.class, () -> {
-            chartaServiceImpl.createCharta(100, -100);
-        });
+        List<Integer> sizes = Arrays.asList(
+                0, 100,
+                -10, 10,
+                10, 0,
+                100, -100);
+        for (int i = 0; i < (sizes.size() / 2); i++) {
+            int finalI = i;
+            assertThrows(IntersectionException.class, () ->
+                    chartaServiceImpl.createCharta(sizes.get(2 * finalI), sizes.get(2 * finalI + 1)));
+        }
     }
+
+    @Test
+    public void FragmentTest() throws ChartaNotFoundException, IntersectionException, IOException {
+
+        List<Integer> sizes = Arrays.asList(
+                -100, -100, 101, 101,
+                -100, 999, 101, 101,
+                999, -100, 101, 101,
+                999, 999, 101, 101,
+                200, 200, 101, 101
+        );
+        for (int i = 0; i < (sizes.size() / 4); i++) {
+            log.info(i + " " +
+                    sizes.get(4 * i) +
+                    sizes.get(4 * i + 1) +
+                    sizes.get(4 * i + 2) +
+                    sizes.get(4 * i + 3));
+            chartaServiceImpl.addFragment(id, bytes, sizes.get(4 * i),
+                    sizes.get(4 * i + 1), sizes.get(4 * i + 2), sizes.get(4 * i + 3));
+            chartaServiceImpl.getFragment(id, sizes.get(4 * i),
+                    sizes.get(4 * i + 1), sizes.get(4 * i + 2), sizes.get(4 * i + 3));
+        }
+    }
+
+    @Test
+    public void addWrongFragmentTest() {
+        List<Integer> sizes = Arrays.asList(
+                -100, -100, 100, 100,
+                -100, 999, 100, 100,
+                999, -100, 100, 100,
+                1000, 1000, 100, 100
+        );
+        for (int i = 0; i < (sizes.size() / 4); i++) {
+            int finalI = i;
+            assertThrows(IntersectionException.class, () -> chartaServiceImpl.addFragment(id, bytes, sizes.get(4 * finalI),
+                    sizes.get(4 * finalI + 1), sizes.get(4 * finalI + 2), sizes.get(4 * finalI + 3)));
+            assertThrows(IntersectionException.class, () -> chartaServiceImpl.getFragment(id, sizes.get(4 * finalI),
+                    sizes.get(4 * finalI + 1), sizes.get(4 * finalI + 2), sizes.get(4 * finalI + 3)));
+        }
+    }
+
 }

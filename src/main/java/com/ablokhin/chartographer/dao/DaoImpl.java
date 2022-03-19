@@ -4,45 +4,58 @@ import com.ablokhin.chartographer.exception.ChartaNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.ablokhin.chartographer.ChartographerApplication.STORAGE_PATH;
 
-@Service
+@Component
 public class DaoImpl implements Dao {
+
+    private static final AtomicLong currentId = new AtomicLong(0);
+
+    @Override
+    public Long createCharta(BufferedImage image) throws ChartaNotFoundException {
+        long id = currentId.addAndGet(1);
+        File file = new File(STORAGE_PATH + "/" + id + ".bmp");
+        try {
+            ImageIO.write(image, "BMP", file);
+        } catch (IOException e) {
+            throw new ChartaNotFoundException("Charta not found during create");
+        }
+        return id;
+    }
 
     @Override
     @Cacheable(cacheNames = "images", key="#id")
-    public byte[] getCharta(Long id) throws ChartaNotFoundException {
+    public BufferedImage getCharta(Long id) throws ChartaNotFoundException {
         File file = new File(STORAGE_PATH + "/" + id + ".bmp");
         try {
-            return  Files.readAllBytes(file.toPath());
+            return ImageIO.read(new ByteArrayInputStream(
+                    Files.readAllBytes(file.toPath())));
         } catch (IOException e) {
-            throw new ChartaNotFoundException("Charta not found during reading");
+            throw new ChartaNotFoundException("Charta not found during getting");
         }
     }
 
     @Override
     @CachePut(cacheNames = "images", key="#id")
-    public byte[] saveCharta(Long id, BufferedImage charta) throws ChartaNotFoundException {
+    public BufferedImage updateCharta(Long id, BufferedImage image) throws ChartaNotFoundException {
         File file = new File(STORAGE_PATH + "/" + id + ".bmp");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            ImageIO.write(charta, "BMP", file);
-            ImageIO.write(charta, "BMP", baos);
+            ImageIO.write(image, "BMP", file);
         } catch (IOException e) {
-            throw new ChartaNotFoundException("Charta not found during save");
+            throw new ChartaNotFoundException("Charta not found during update");
         }
-        byte[] bytes = baos.toByteArray();
-        return bytes;
+        return image;
     }
 
     @Override
