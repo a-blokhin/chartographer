@@ -1,6 +1,6 @@
 package com.ablokhin.chartographer.controller;
 
-import com.ablokhin.chartographer.exception.ChartaNotFoundException;
+import com.ablokhin.chartographer.exception.FragmentNotFoundException;
 import com.ablokhin.chartographer.exception.IntersectionException;
 import com.ablokhin.chartographer.service.ChartaServiceImpl;
 
@@ -19,19 +19,19 @@ public class ChartaController {
     private ChartaServiceImpl chartaServiceImpl;
 
     @PostMapping
-    public ResponseEntity createCharta(@RequestParam Integer width,@RequestParam Integer height) {
+    public ResponseEntity createCharta(@RequestParam Integer width, @RequestParam Integer height) {
         try {
-            Long id = chartaServiceImpl.createCharta(width, height);
+            String id = chartaServiceImpl.createCharta(width, height);
             return ResponseEntity.status(HttpStatus.CREATED).body(id);
         } catch (IntersectionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (ChartaNotFoundException e) {
+        } catch (FragmentNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping("{id}/")
-    public ResponseEntity addFragment(@PathVariable Long id, @RequestBody byte[] postedFragment,
+    public ResponseEntity addFragment(@PathVariable String id, @RequestBody byte[] postedFragment,
                                       @RequestParam Integer x, @RequestParam Integer y,
                                       @RequestParam Integer width, @RequestParam Integer height) {
         try {
@@ -39,20 +39,20 @@ public class ChartaController {
             return ResponseEntity.ok("");
         } catch (IOException | IntersectionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (ChartaNotFoundException e) {
+        } catch (FragmentNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping(value = "{id}/", produces = "image/bmp")
-    public ResponseEntity<byte[]> getFragment(@PathVariable Long id,
-                                         @RequestParam Integer x, @RequestParam Integer y,
-                                         @RequestParam Integer width, @RequestParam Integer height) {
+    public ResponseEntity<byte[]> getFragment(@PathVariable String id,
+                                              @RequestParam Integer x, @RequestParam Integer y,
+                                              @RequestParam Integer width, @RequestParam Integer height) {
         try {
             return ResponseEntity.ok().body(chartaServiceImpl.getFragment(id, x, y, width, height));
         } catch (IntersectionException e) {
             return ResponseEntity.badRequest().build();
-        } catch (ChartaNotFoundException e) {
+        } catch (FragmentNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
@@ -60,11 +60,11 @@ public class ChartaController {
     }
 
     @DeleteMapping(value = "{id}/")
-    public ResponseEntity deleteCharta(@PathVariable Long id) {
+    public ResponseEntity deleteCharta(@PathVariable String id) {
         try {
             chartaServiceImpl.deleteCharta(id);
             return ResponseEntity.ok().body("");
-        } catch (ChartaNotFoundException e) {
+        } catch (FragmentNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
