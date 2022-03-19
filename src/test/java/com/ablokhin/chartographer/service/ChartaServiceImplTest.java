@@ -2,7 +2,6 @@ package com.ablokhin.chartographer.service;
 
 import com.ablokhin.chartographer.exception.ChartaNotFoundException;
 import com.ablokhin.chartographer.exception.IntersectionException;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +16,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Slf4j
 @SpringBootTest
 public class ChartaServiceImplTest {
 
@@ -70,11 +68,6 @@ public class ChartaServiceImplTest {
                 200, 200, 101, 101
         );
         for (int i = 0; i < (sizes.size() / 4); i++) {
-            log.info(i + " " +
-                    sizes.get(4 * i) +
-                    sizes.get(4 * i + 1) +
-                    sizes.get(4 * i + 2) +
-                    sizes.get(4 * i + 3));
             chartaServiceImpl.addFragment(id, bytes, sizes.get(4 * i),
                     sizes.get(4 * i + 1), sizes.get(4 * i + 2), sizes.get(4 * i + 3));
             chartaServiceImpl.getFragment(id, sizes.get(4 * i),

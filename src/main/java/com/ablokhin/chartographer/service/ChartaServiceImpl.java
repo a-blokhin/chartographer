@@ -3,7 +3,6 @@ package com.ablokhin.chartographer.service;
 import com.ablokhin.chartographer.dao.Dao;
 import com.ablokhin.chartographer.exception.ChartaNotFoundException;
 import com.ablokhin.chartographer.exception.IntersectionException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@Slf4j
 @Service
 public class ChartaServiceImpl implements ChartaService {
 
@@ -68,7 +66,6 @@ public class ChartaServiceImpl implements ChartaService {
     public void addFragment(Long id, byte[] postedFragment, Integer x, Integer y,
                             Integer width, Integer height) throws IOException, ChartaNotFoundException, IntersectionException {
         BufferedImage oldImage = daoImpl.getCharta(id);
-        log.info(y + " " + height + " " + oldImage.getHeight());
         checkConstraint(x, -width + 1, oldImage.getWidth() - 1);
         checkConstraint(y, -height + 1, oldImage.getHeight() - 1);
         BufferedImage fragment = ImageIO.read(new ByteArrayInputStream(postedFragment));
