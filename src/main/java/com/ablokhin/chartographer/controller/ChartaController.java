@@ -25,7 +25,7 @@ public class ChartaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(id);
         } catch (IntersectionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (FragmentNotFoundException e) {
+        } catch (FragmentNotFoundException | IOException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -64,7 +64,7 @@ public class ChartaController {
         try {
             chartaServiceImpl.deleteCharta(id);
             return ResponseEntity.ok().body("");
-        } catch (FragmentNotFoundException e) {
+        } catch (FragmentNotFoundException | IOException e) {
             return ResponseEntity.notFound().build();
         }
     }

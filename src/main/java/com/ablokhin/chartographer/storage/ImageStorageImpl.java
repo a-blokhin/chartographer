@@ -9,34 +9,39 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.ablokhin.chartographer.ChartographerApplication.STORAGE_PATH;
 
 @Component
-
 public class ImageStorageImpl implements ImageStorage {
 
+    private static Path getFragmentPath(String uid) throws IOException {
+        Path path = Paths.get(STORAGE_PATH, "fragments", uid.substring(0,2));
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+        return Paths.get(STORAGE_PATH, "fragments", uid.substring(0,2), uid.substring(2) + ".bmp");
+    }
+
     @Override
-    @Cacheable(cacheNames = "images", key = "#id")
-    public BufferedImage getFragment(String id) throws FragmentNotFoundException {
-        File file = new File(STORAGE_PATH + "/" + id + ".bmp");
+    @Cacheable(cacheNames = "images", key = "#uid")
+    public BufferedImage getFragment(String uid) throws FragmentNotFoundException {
         try {
-            return ImageIO.read(new ByteArrayInputStream(Files.readAllBytes(file.toPath())));
+            return ImageIO.read(new ByteArrayInputStream(Files.readAllBytes(getFragmentPath(uid))));
         } catch (IOException e) {
             throw new FragmentNotFoundException("Fragment not found during getting");
         }
     }
 
     @Override
-    @CachePut(cacheNames = "images", key = "#id")
-    public BufferedImage saveFragment(String id, BufferedImage image) throws FragmentNotFoundException {
-        File file = new File(STORAGE_PATH + "/" + id + ".bmp");
+    @CachePut(cacheNames = "images", key = "#uid")
+    public BufferedImage saveFragment(String uid, BufferedImage image) throws FragmentNotFoundException {
         try {
-            ImageIO.write(image, "BMP", file);
+            ImageIO.write(image, "BMP", getFragmentPath(uid).toFile());
         } catch (IOException e) {
             throw new FragmentNotFoundException("Charta not found during update");
         }
@@ -47,7 +52,7 @@ public class ImageStorageImpl implements ImageStorage {
     @CacheEvict(cacheNames = "images", key = "#id")
     public Boolean deleteFragment(String id) throws FragmentNotFoundException {
         try {
-            Files.delete(Paths.get(STORAGE_PATH + "/" + id + ".bmp"));
+            Files.delete(getFragmentPath(id));
             return true;
         } catch (IOException e) {
             throw new FragmentNotFoundException("Charta not found during deletion");

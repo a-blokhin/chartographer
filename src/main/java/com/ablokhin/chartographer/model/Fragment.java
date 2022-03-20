@@ -1,7 +1,5 @@
 package com.ablokhin.chartographer.model;
 
-import java.util.UUID;
-
 public class Fragment {
     private final String id;
     private final Integer CoordinateX;
@@ -9,8 +7,8 @@ public class Fragment {
     private final Integer Width;
     private final Integer Height;
 
-    public Fragment(Integer coordinateX, Integer coordinateY, Integer width, Integer height) {
-        id = UUID.randomUUID().toString();
+    public Fragment(String id, Integer coordinateX, Integer coordinateY, Integer width, Integer height) {
+        this.id = id;
         CoordinateX = coordinateX;
         CoordinateY = coordinateY;
         Width = width;
