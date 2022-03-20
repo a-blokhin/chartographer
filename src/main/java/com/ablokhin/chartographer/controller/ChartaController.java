@@ -4,6 +4,7 @@ import com.ablokhin.chartographer.exception.FragmentNotFoundException;
 import com.ablokhin.chartographer.exception.IntersectionException;
 import com.ablokhin.chartographer.service.ChartaServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Slf4j
 @RestController
 @RequestMapping("/chartas/")
 public class ChartaController {
@@ -32,8 +34,8 @@ public class ChartaController {
 
     @PostMapping("{id}/")
     public ResponseEntity addFragment(@PathVariable String id, @RequestBody byte[] postedFragment,
-                                      @RequestParam Integer x, @RequestParam Integer y,
-                                      @RequestParam Integer width, @RequestParam Integer height) {
+                                      @RequestParam int x, @RequestParam int y,
+                                      @RequestParam int width, @RequestParam int height) {
         try {
             chartaServiceImpl.addFragment(id, postedFragment, x, y, width, height);
             return ResponseEntity.ok("");
@@ -46,8 +48,8 @@ public class ChartaController {
 
     @GetMapping(value = "{id}/", produces = "image/bmp")
     public ResponseEntity<byte[]> getFragment(@PathVariable String id,
-                                              @RequestParam Integer x, @RequestParam Integer y,
-                                              @RequestParam Integer width, @RequestParam Integer height) {
+                                              @RequestParam int x, @RequestParam int y,
+                                              @RequestParam int width, @RequestParam int height) {
         try {
             return ResponseEntity.ok().body(chartaServiceImpl.getFragment(id, x, y, width, height));
         } catch (IntersectionException e) {

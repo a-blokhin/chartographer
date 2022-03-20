@@ -29,7 +29,7 @@ public class CacheConfiguration {
                                     if (value instanceof BufferedImage) {
                                         return ((BufferedImage) value).getWidth() * ((BufferedImage) value).getHeight() * 3;
                                     }
-                                    throw new IllegalStateException("Using array size is only supported for byte arrays"); //$NON-NLS-1$
+                                    throw new IllegalStateException("This cache is only supported for byte arrays");
                                 })
                                 .maximumWeight(MAX_CACHE_SIZE)
                                 .build().asMap(),

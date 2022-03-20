@@ -5,14 +5,24 @@ import java.util.List;
 
 public class Charta {
     private final String id;
-    private final Integer width;
-    private final Integer height;
+    private final int width;
+    private final int height;
     private final List<Fragment> fragments = new ArrayList<>();
 
-    public Charta(String id, Integer width, Integer height) {
+    public Charta(String id, int width, int height) {
         this.id = id;
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public String toString() {
+        return "Charta{" +
+                "id='" + id + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", fragments=" + fragments +
+                '}';
     }
 
     public List<Fragment> getFragments() {
@@ -27,11 +37,11 @@ public class Charta {
         return id;
     }
 
-    public Integer getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public Integer getHeight() {
+    public int getHeight() {
         return height;
     }
 

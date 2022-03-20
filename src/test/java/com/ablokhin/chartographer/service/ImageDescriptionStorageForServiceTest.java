@@ -1,6 +1,5 @@
 package com.ablokhin.chartographer.service;
 
-import com.ablokhin.chartographer.exception.FragmentNotFoundException;
 import com.ablokhin.chartographer.model.Charta;
 import com.ablokhin.chartographer.storage.ImageDescriptionStorage;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,7 @@ public class ImageDescriptionStorageForServiceTest implements ImageDescriptionSt
 
 
     @Override
-    public String createCharta(Integer width, Integer height) {
+    public String createCharta(int width, int height) {
         return "c2246938-b196-45d1-a835-7e1f682b0e16";
     }
 
@@ -29,13 +28,11 @@ public class ImageDescriptionStorageForServiceTest implements ImageDescriptionSt
     }
 
     @Override
-    public Boolean addFragment(String uid, Integer coordinateX, Integer coordinateY,
-                               Integer width, Integer height, BufferedImage fragmentImage) {
-        return true;
+    public void addFragment(String uid, int coordinateX, int coordinateY,
+                            int width, int height, BufferedImage fragmentImage) {
     }
 
     @Override
-    public Boolean deleteCharta(String uid) {
-        return true;
+    public void deleteCharta(String uid) {
     }
 }

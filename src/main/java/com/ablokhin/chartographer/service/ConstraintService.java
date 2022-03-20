@@ -4,12 +4,12 @@ import com.ablokhin.chartographer.exception.IntersectionException;
 import com.ablokhin.chartographer.model.Charta;
 
 public interface ConstraintService {
-    boolean checkConstraint(Integer x, Integer minX, Integer maxX);
+    boolean checkConstraint(int x, int minX, int maxX);
 
-    void checkFragmentSizeConstraint(Integer width, Integer height) throws IntersectionException;
+    void checkFragmentSizeConstraint(int width, int height) throws IntersectionException;
 
-    void checkChartaSizeConstraint(Integer width, Integer height) throws IntersectionException;
+    void checkChartaSizeConstraint(int width, int height) throws IntersectionException;
 
-    void checkIntersectionConstraint(Integer x, Integer y, Integer width, Integer height,
-                                     Charta charta) throws IntersectionException;
+    boolean checkIntersectionConstraint(int x, int y, int width, int height,
+                                        Charta charta) throws IntersectionException;
 }

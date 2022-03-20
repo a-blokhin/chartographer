@@ -19,12 +19,14 @@ import static com.ablokhin.chartographer.ChartographerApplication.STORAGE_PATH;
 @Component
 public class ImageStorageImpl implements ImageStorage {
 
+    private static final String FRAGMENTS_FOLDER = "fragments";
+
     private static Path getFragmentPath(String uid) throws IOException {
-        Path path = Paths.get(STORAGE_PATH, "fragments", uid.substring(0,2));
+        Path path = Paths.get(STORAGE_PATH, FRAGMENTS_FOLDER, uid.substring(0, 2));
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
-        return Paths.get(STORAGE_PATH, "fragments", uid.substring(0,2), uid.substring(2) + ".bmp");
+        return Paths.get(STORAGE_PATH, FRAGMENTS_FOLDER, uid.substring(0, 2), uid.substring(2) + ".bmp");
     }
 
     @Override

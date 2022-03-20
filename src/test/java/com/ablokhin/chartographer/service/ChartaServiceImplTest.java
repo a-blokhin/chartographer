@@ -37,7 +37,7 @@ public class ChartaServiceImplTest {
     }
 
     @Test
-    public void createChartaTest() throws IntersectionException, FragmentNotFoundException, IOException {
+    public void createCharta_CorrectData_NotThrowExceptions() throws IntersectionException, FragmentNotFoundException, IOException {
         List<Integer> sizes = Arrays.asList(
                 1, 1,
                 6000, 6000,
@@ -49,7 +49,7 @@ public class ChartaServiceImplTest {
     }
 
     @Test
-    public void createWrongChartaTest() {
+    public void createCharta_WrongData_ThrowExceptions() {
         List<Integer> sizes = Arrays.asList(
                 0, 100,
                 -10, 10,
@@ -57,14 +57,13 @@ public class ChartaServiceImplTest {
                 100, -100);
         for (int i = 0; i < (sizes.size() / 2); i++) {
             int finalI = i;
-            log.info("finalI");
             assertThrows(IntersectionException.class, () ->
                     chartaServiceImpl.createCharta(sizes.get(2 * finalI), sizes.get(2 * finalI + 1)));
         }
     }
 
     @Test
-    public void FragmentTest() throws IntersectionException, IOException, FragmentNotFoundException {
+    public void addGetFragment_CorrectData_NotThrowExceptions() throws IntersectionException, IOException, FragmentNotFoundException {
 
         List<Integer> sizes = Arrays.asList(
                 -100, -100, 101, 101,
@@ -82,7 +81,7 @@ public class ChartaServiceImplTest {
     }
 
     @Test
-    public void addWrongFragmentTest() {
+    public void addGetFragment_WrongData_ThrowExceptions() {
         List<Integer> sizes = Arrays.asList(
                 -100, -100, 100, 100,
                 -100, 999, 100, 100,

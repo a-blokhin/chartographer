@@ -7,15 +7,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public interface ImageDescriptionStorage {
-    String createCharta(Integer width, Integer height) throws IOException, FragmentNotFoundException;
+    String createCharta(int width, int height) throws IOException, FragmentNotFoundException;
 
     Charta getCharta(String uid) throws FragmentNotFoundException;
 
     BufferedImage getFragment(String uid) throws FragmentNotFoundException;
 
-    Boolean addFragment(String uid,
-                        Integer coordinateX, Integer coordinateY, Integer width, Integer height,
-                        BufferedImage fragmentImage) throws FragmentNotFoundException, IOException;
+    void addFragment(String uid,
+                     int coordinateX, int coordinateY, int width, int height,
+                     BufferedImage fragmentImage) throws FragmentNotFoundException, IOException;
 
-    Boolean deleteCharta(String uid) throws FragmentNotFoundException, IOException;
+    void deleteCharta(String uid) throws FragmentNotFoundException, IOException;
 }
